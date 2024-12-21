@@ -11,16 +11,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-//@Configuration
+@Configuration
 public class DefaultSecurityConfig {
 
-//    @Autowired
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-//    @Bean
+    @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth ->
-                        auth
+        http.securityMatcher("/oauth2/**", "/login", "/authorize", "/token", "/jwks")
+                .authorizeHttpRequests(auth ->
+                                auth.requestMatchers("/oauth2/**").permitAll()
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
@@ -28,11 +29,11 @@ public class DefaultSecurityConfig {
         return http.build();
     }
 
-//    @Bean
+    @Bean
     public InMemoryUserDetailsManager userDetailsManager() {
         UserDetails user = User.builder()
                 .username("divya")
-                .password(bCryptPasswordEncoder.encode("divya@123")) // Replace 'password' with your desired password
+                .password(bCryptPasswordEncoder.encode("divya@123"))
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(user);

@@ -26,6 +26,8 @@ public class AuthorisationServerConfig {
     @Bean
     public SecurityFilterChain authorisationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .registeredClientRepository(registeredClientRepository());
         return http.build();
@@ -34,12 +36,12 @@ public class AuthorisationServerConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("client-id")
-                .clientSecret("{noop}client-secret") // Use password encoding in production
+                .clientId("ATBY923mIX")
+                .clientSecret("{bcrypt}awedcmwkfkker84mgmf73n5fv8") // Use password encoding in production
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/custom-client")
+                .redirectUri("http://localhost:8080/login/oauth2/code/MyOAuth2Server")
                 .scope("read")
                 .scope("write")
                 .build();
@@ -51,13 +53,13 @@ public class AuthorisationServerConfig {
     public AuthorizationServerSettings authorizationServerSettings() {
         // Configure the authorization server's issuer URL, endpoints, etc.
         return AuthorizationServerSettings.builder()
-                .issuer("http://127.0.0.1:8080") // Replace with your issuer URL
+                .issuer("http://localhost:9000") // Replace with your issuer URL
                 .build();
     }
 
-//    @Bean
-//    public BCryptPasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }
